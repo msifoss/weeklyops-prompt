@@ -32,6 +32,7 @@ Show: "Save to weeklyops-data as **{category}**: *{title}*?" → on yes, call `m
 | `/email-scan` | Generate a structured prompt for your email MCP to extract categorized email data |
 | `/email-ingest [file]` | Process email scan output, cross-reference OKRs, save structured summary |
 | `/weekly-update [date-range]` | OKR-disciplined weekly self-review from email/calendar data |
+| `/prompt-feature-assess` | Surface platform enhancement ideas from this session (with consent) |
 
 Skills live in `skills/` — each has a `SKILL.md` with full instructions.
 
@@ -70,8 +71,9 @@ weeklyops-prompt/
 ├── .mcp.json          # MCP connection (not committed)
 ├── Makefile
 ├── skills/
-│   ├── email-scan/    # /email-scan
-│   ├── email-ingest/  # /email-ingest
-│   └── weekly-update/ # /weekly-update
+│   ├── email-scan/           # /email-scan
+│   ├── email-ingest/         # /email-ingest
+│   ├── weekly-update/        # /weekly-update
+│   └── prompt-feature-assess/ # /prompt-feature-assess
 └── workspace/         # Local working files (gitignored data/)
 ```
