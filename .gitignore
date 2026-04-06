@@ -1,0 +1,23 @@
+# Environment
+.env
+.env.local
+
+# MCP config (contains expanded tokens)
+.mcp.json
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Working files
+workspace/*/data/
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
