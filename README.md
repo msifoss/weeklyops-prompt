@@ -21,14 +21,15 @@ This repo is your Claude Code workspace for interacting with the WeeklyOps syste
 | `/email-scan` | Generate a prompt for your email tool to extract structured data |
 | `/email-ingest [file]` | Process email scan output, cross-reference with OKRs, save summary |
 | `/weekly-update [range]` | Produce an OKR-disciplined weekly self-review |
+| `/prompt-feature-assess` | Surface platform enhancement ideas from your session (with consent) |
 
 All persistent output is routed through the WeeklyOps MCP server to the shared data repo — nothing gets lost in local files.
 
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/code) CLI installed
-- A WeeklyOps API key (ask your team admin)
-- Node.js (for `mcp-remote` proxy)
+- A WeeklyOps API key (get yours from Chris)
+- Node.js 18+ (for the `mcp-remote` proxy)
 
 ## Troubleshooting
 
@@ -47,3 +48,5 @@ weeklyops (MCP server)
     ▼
 weeklyops-data (structured markdown)
 ```
+
+For the full getting-started walkthrough, see [docs/guides/getting-started.md](docs/guides/getting-started.md).
