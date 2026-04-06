@@ -1,10 +1,10 @@
 # Getting Started with weeklyops-prompt
 
-This guide walks you through setting up your conversational workspace for WeeklyOps. After setup, you'll be able to analyze emails, write weekly reviews, and interact with your team's OKR data — all from the terminal.
+This is the one repo every team member needs. It connects you to the WeeklyOps system — either from the terminal (Claude Code) or the Claude Desktop app.
 
 ## What You Need
 
-1. **Claude Code** — the CLI tool from Anthropic. Install it from [claude.ai/code](https://claude.ai/code).
+1. **Claude Code** and/or **Claude Desktop** — get Claude Code from [claude.ai/code](https://claude.ai/code), Claude Desktop from [claude.ai/download](https://claude.ai/download)
 2. **Your API key** — a personal Bearer token for the WeeklyOps MCP server. Ask Chris for yours.
 3. **Node.js 18+** — used by the `mcp-remote` proxy to connect to the MCP server. Install via `brew install node` on Mac.
 
@@ -17,28 +17,44 @@ git clone https://github.com/msifoss/weeklyops-prompt.git
 cd weeklyops-prompt
 ```
 
-### Step 2: Run setup
+### Step 2: Pick your interface
+
+**Option A: Terminal (Claude Code)**
 
 ```bash
 make setup
 ```
 
-Setup is interactive. It will:
+This configures Claude Code with your identity and MCP connection. It will:
+1. Ask your name (pick from the team roster)
+2. Ask for your API key
+3. Generate `.env` and `.mcp.json` (gitignored, your key stays local)
+4. Run 6 health checks to verify everything works
 
-1. **Ask your name** — pick from the team roster (Chris, Mary-Margaret, Fathima, Isaac, Avery, MD, Tyler, David)
-2. **Ask for your API key** — paste the token Chris gave you
-3. **Generate your config files** — creates `.env` and `.mcp.json` (these are gitignored, your key stays local)
-4. **Run health checks** — verifies your MCP connection works
+**Option B: Claude Desktop App**
 
-If all 6 checks pass, you're ready.
+```bash
+make install-app
+```
 
-### Step 3: Open Claude Code
+This adds WeeklyOps to the Claude Desktop app. It will:
+1. Check Node.js and install `mcp-remote` if needed
+2. Read your API key (from `.env` if you already ran `make setup`, or ask for it)
+3. Add the WeeklyOps MCP server entry to Claude Desktop's config
+4. Tell you to restart Claude Desktop
 
+**You can run both** if you want WeeklyOps in both the terminal and the desktop app.
+
+### Step 3: Start using it
+
+**Terminal:**
 ```bash
 claude
 ```
 
-That's it. You're in. Claude knows who you are, has access to the WeeklyOps MCP server, and will route any documents you create to the shared data repo.
+**Desktop:** Restart Claude Desktop (Cmd+Q, reopen). Look for the tools icon in the chat input.
+
+That's it. Claude knows who you are, has access to the WeeklyOps MCP server, and will route any documents you create to the shared data repo.
 
 ## What You Can Do
 

@@ -1,20 +1,26 @@
 # weeklyops-prompt
 
-Conversational front-end for the [WeeklyOps](https://github.com/msifoss/weeklyops) team operations system. Clone this repo, run setup, and use Claude Code for OKR conversations, email analysis, and weekly reviews.
+**The one repo every team member needs.** Clone it, run setup, and interact with the WeeklyOps system — either from the terminal (Claude Code) or the Claude Desktop app.
 
 ## Quick Start
 
 ```bash
 git clone https://github.com/msifoss/weeklyops-prompt.git
 cd weeklyops-prompt
-make setup
 ```
 
-Setup will ask for your name and API key, then verify your MCP connection.
+**Pick your interface:**
 
-## What This Does
+| Command | For who |
+|---------|---------|
+| `make setup` | Terminal users — configures Claude Code with MCP connection |
+| `make install-app` | Desktop users — adds WeeklyOps to the Claude Desktop app |
 
-This repo is your Claude Code workspace for interacting with the WeeklyOps system. It provides guided skills for common workflows:
+Both ask for your name and API key. You can run both if you use both interfaces.
+
+## What You Can Do
+
+Talk naturally ("show me my OKR status") or use guided skills:
 
 | Skill | What it does |
 |-------|-------------|
@@ -27,26 +33,32 @@ All persistent output is routed through the WeeklyOps MCP server to the shared d
 
 ## Prerequisites
 
-- [Claude Code](https://claude.ai/code) CLI installed
+- [Claude Code](https://claude.ai/code) CLI and/or [Claude Desktop](https://claude.ai/download)
 - A WeeklyOps API key (get yours from Chris)
 - Node.js 18+ (for the `mcp-remote` proxy)
 
 ## Troubleshooting
 
-Run `make doctor` to check your MCP connection and identity.
+```bash
+make doctor
+```
+
+## Full Guide
+
+See [docs/guides/getting-started.md](docs/guides/getting-started.md) for the detailed walkthrough.
 
 ## Architecture
 
 ```
-weeklyops-prompt (this repo — conversations + skills)
+weeklyops-prompt (this repo — your workspace)
     │
-    │ calls MCP tools
+    │ MCP tools (save_document, get_team_status, etc.)
     ▼
-weeklyops (MCP server)
+weeklyops (MCP server — platform code, developers only)
     │
-    │ reads/writes via GitHub API
+    │ GitHub API
     ▼
-weeklyops-data (structured markdown)
+weeklyops-data (structured team data)
 ```
 
-For the full getting-started walkthrough, see [docs/guides/getting-started.md](docs/guides/getting-started.md).
+You don't need the other repos. This is your single entry point.
