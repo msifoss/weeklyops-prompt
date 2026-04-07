@@ -77,3 +77,90 @@ weeklyops-prompt/
 │   └── prompt-feature-assess/ # /prompt-feature-assess
 └── workspace/         # Local working files (gitignored data/)
 ```
+
+## Session Breadcrumbs
+
+Automatically capture key conversation moments to a local file so nothing is lost if the session ends abruptly.
+
+### Session Start Gate
+
+Before beginning any new work at session start, check for existing files matching `workspace/session-*.md`.
+
+If files exist:
+1. List them by filename (do NOT dump contents — just show filenames and dates)
+2. For each file, ask: **Push to MCP** or **Discard**?
+   - **Push:** Read the file, prepend a 2-line summary, save via `save_document(category="notes", title="Session breadcrumbs — {date from filename}")`, then delete the local file
+   - **Discard:** Delete the file immediately
+3. Do NOT proceed with new work until all old session files are resolved
+4. Maximum 3 session files may exist. If at cap, you must resolve before creating a new one.
+
+### Session File Creation
+
+On the first substantive interaction of a session (after the start gate), create:
+
+```
+workspace/session-{username}-YYYYMMDD-HHMM.md
+```
+
+Where `{username}` comes from `config.yaml`. Write this header:
+
+```markdown
+# Session Breadcrumbs — {YYYY-MM-DD HH:MM}
+**User:** {name}
+```
+
+### When to Write a Breadcrumb Entry
+
+Append an entry ONLY when you observe one of these three trigger categories:
+
+1. **State change** — a KR value was discussed or updated, a document was saved via MCP, a todo was completed or created
+2. **Commitment** — a decision was stated, an action item was assigned, a deadline was set
+3. **Escalation** — a blocker was raised, a risk was flagged, a concern was escalated
+
+Do NOT log routine Q&A, greetings, file reads, or exploratory discussion. If in doubt, don't log it.
+
+### Entry Format
+
+Append to the session file using the Edit tool:
+
+```markdown
+## HH:MM — {Category}
+{1-3 line description of what happened}
+```
+
+Where Category is one of: `State Change`, `Commitment`, `Escalation`.
+
+One Write/Edit call per entry. Never rewrite the whole file.
+
+### Privacy Gate
+
+Before writing ANY breadcrumb entry, scan the entry text for:
+- API keys or tokens (patterns: `sk-`, `ghp_`, `AKIA`, `Bearer`, `token=`, `key=`)
+- Passwords near assignment operators (`password=`, `passwd:`, `secret=`)
+- Content that appears to come from `.env` files
+
+If a match is found:
+1. Show the user the flagged content
+2. Ask: "This looks like it may contain sensitive data. **Redact** and write, or **Skip** this entry?"
+3. Do NOT write until the user responds
+
+This scanner targets high-confidence secrets only. Team member names, emails, and phone numbers are normal business data and should NOT be flagged.
+
+### User Controls
+
+- **"pause breadcrumbs"** — stop capturing entries until resumed. Acknowledge with "Breadcrumbs paused."
+- **"resume breadcrumbs"** — restart capturing. Acknowledge with "Breadcrumbs resumed."
+- **"push breadcrumbs"** — immediately push the current session file to MCP:
+  1. Read the session file
+  2. Prepend a 2-line summary of the session
+  3. Save via `save_document(category="notes", title="Session breadcrumbs — {date}")`
+  4. Confirm MCP save succeeded. If it fails, retry once, then warn the user.
+  5. Delete the local file
+  6. Create a fresh session file to continue capturing
+
+### End of Session
+
+When the conversation appears to be wrapping up (user says goodbye, thanks, "that's all", etc.):
+1. If the session file has entries, offer: "Push breadcrumbs to MCP before we wrap up?"
+2. On yes → push (same flow as "push breadcrumbs" above)
+3. On no → the file stays in workspace/ for next session's start gate
