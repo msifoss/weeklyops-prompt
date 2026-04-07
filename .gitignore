@@ -13,7 +13,7 @@
 Thumbs.db
 
 # Working files
-workspace/*/data/
+workspace/
 
 # Editor
 .vscode/settings.json
