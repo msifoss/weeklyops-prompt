@@ -1,6 +1,0 @@
-# WeeklyOps Prompt — User Configuration
-# Filled by `make setup`. Only your name is needed here.
-# The MCP server provides all team context.
-
-user:
-  name: ""  # Your team name (Chris, Mary-Margaret, Fathima, Isaac, Avery, MD, Tyler, David)
