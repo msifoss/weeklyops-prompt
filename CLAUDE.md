@@ -33,14 +33,16 @@ Show: "Save to weeklyops-data as **{category}**: *{title}*?" → on yes, call `m
 
 ## Skills
 
-| Skill | Description |
-|-------|-------------|
-| `/email-scan` | Generate a structured prompt for your email MCP to extract categorized email data |
-| `/email-ingest [file]` | Process email scan output, cross-reference OKRs, save structured summary |
-| `/weekly-update [date-range]` | OKR-disciplined weekly self-review from email/calendar data |
-| `/prompt-feature-assess` | Surface platform enhancement ideas from this session (with consent) |
+These are conversational workflows defined in `skills/`. Ask for them naturally — they aren't slash commands.
 
-Skills live in `skills/` — each has a `SKILL.md` with full instructions. Each skill's `SKILL.md` is the full specification. The table above is a summary.
+| Workflow | How to trigger | Description |
+|----------|---------------|-------------|
+| Email Scan | "scan my email" | Generate a structured prompt for your email MCP to extract categorized email data |
+| Email Ingest | "ingest email data" | Process email scan output, cross-reference OKRs, save structured summary |
+| Weekly Update | "do my weekly update" | OKR-disciplined weekly self-review from email/calendar data |
+| Feature Assess | "feature assess" | Surface platform enhancement ideas from this session (with consent) |
+
+Each workflow has a `SKILL.md` in its `skills/` subdirectory with full instructions.
 
 ## MCP Tools
 
@@ -54,6 +56,8 @@ Call `mcp__weeklyops__weeklyops_help` for the full tool list. Key tools:
 | `save_document` | Save a document to weeklyops-data |
 | `list_documents` | Browse saved documents |
 | `update_kr` | Update a KR value |
+| `add_kr_note` | Add a timestamped note to any KR |
+| `get_kr_notes` | Get all notes for a KR chronologically |
 | `submit_checkin` | Mid-week check-in |
 | `submit_retro` | Friday retro entry |
 | `compile_shoutouts` | View week's shoutouts |
@@ -63,7 +67,7 @@ Call `mcp__weeklyops__weeklyops_help` for the full tool list. Key tools:
 
 The MCP server manages structured data in the `weeklyops-data` repo. You don't need to know the file structure — the MCP tools handle paths and formatting. Key concepts:
 
-- **OKRs** are organized by quarter (e.g., 2026-Q2) with KR IDs like `infra-1.1`, `mktg-2.3`
+- **OKRs** are organized by quarter (e.g., 2026-Q2) with KR IDs like `Q2-2026-infra-1.1`, `Q1-2026-mktg-2.3`
 - **Documents** are categorized and author-scoped where appropriate
 - **Shoutouts, check-ins, retros, agendas** are organized by ISO week (e.g., 2026-W14)
 - **Quarter scoping:** Default to the current quarter for all OKR queries. If the user asks about a different quarter, confirm before switching.
