@@ -14,6 +14,10 @@ Read `config.yaml` for the user's name. On first interaction, call `mcp__weeklyo
 2. **Working files are okay locally.** Intermediate data (email JSON, draft notes, scratch) can live in `workspace/`. Only final, team-visible outputs go through MCP.
 3. **File naming:** All timestamped files use `YYYYMMDD-HHMM-slug.ext` format.
 4. **Preview before saving.** Show the user what will be saved (title, category, first few lines) and ask for confirmation before calling `save_document`.
+5. **Always pull fresh data.** When answering questions about current state — KR values, team status, document lists, todos — call the relevant MCP tool. Never answer from earlier results in the same conversation, even if the same question was asked minutes ago.
+6. **Never fabricate MCP data.** Do not state KR values, pace, status, or any server-managed data without a tool result from the current request. If an MCP tool call fails, report the failure — do not substitute remembered or guessed values.
+7. **Read before write.** Before updating any MCP data (`update_kr`, `submit_checkin`, `submit_retro`), pull the current state and show it to the user. Confirm the intended change before submitting.
+8. **Scope to the current user.** Only modify data (KRs, check-ins, retros) for the authenticated user. Cross-person updates require explicit request. When in doubt, ask.
 
 ## Saving Convention
 
@@ -22,6 +26,8 @@ When any skill or freeform conversation produces a saveable artifact:
 ```
 Category options: rfcs, solutions, email-summaries, context-updates, reports, notes, feature-requests
 ```
+
+Use only these categories. If content doesn't fit, default to `notes`.
 
 Show: "Save to weeklyops-data as **{category}**: *{title}*?" → on yes, call `mcp__weeklyops__save_document`.
 
@@ -34,7 +40,7 @@ Show: "Save to weeklyops-data as **{category}**: *{title}*?" → on yes, call `m
 | `/weekly-update [date-range]` | OKR-disciplined weekly self-review from email/calendar data |
 | `/prompt-feature-assess` | Surface platform enhancement ideas from this session (with consent) |
 
-Skills live in `skills/` — each has a `SKILL.md` with full instructions.
+Skills live in `skills/` — each has a `SKILL.md` with full instructions. Each skill's `SKILL.md` is the full specification. The table above is a summary.
 
 ## MCP Tools
 
@@ -60,6 +66,7 @@ The MCP server manages structured data in the `weeklyops-data` repo. You don't n
 - **OKRs** are organized by quarter (e.g., 2026-Q2) with KR IDs like `infra-1.1`, `mktg-2.3`
 - **Documents** are categorized and author-scoped where appropriate
 - **Shoutouts, check-ins, retros, agendas** are organized by ISO week (e.g., 2026-W14)
+- **Quarter scoping:** Default to the current quarter for all OKR queries. If the user asks about a different quarter, confirm before switching.
 
 ## Working Directory
 
@@ -129,8 +136,6 @@ Append to the session file using the Edit tool:
 ```
 
 Where Category is one of: `State Change`, `Commitment`, `Escalation`.
-
-One Write/Edit call per entry. Never rewrite the whole file.
 
 ### Privacy Gate
 
