@@ -386,7 +386,9 @@ cat > "$PROJECT_DIR/.mcp.json" <<JSON
         "mcp-remote",
         "https://weeklyops.membies.com/mcp",
         "--header",
-        "Authorization: Bearer $WEEKLYOPS_API_KEY"
+        "Authorization: Bearer $WEEKLYOPS_API_KEY",
+        "--transport",
+        "http-only"
       ]
     }
   }
