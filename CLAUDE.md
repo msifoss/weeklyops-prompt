@@ -58,6 +58,7 @@ Call `mcp__weeklyops__weeklyops_help` for the full tool list. Key tools:
 | `update_kr` | Update a KR value |
 | `add_kr_note` | Add a timestamped note to any KR |
 | `get_kr_notes` | Get all notes for a KR chronologically |
+| `close_kr` | Mark a KR as done at current value |
 | `archive_kr` | Archive a KR (hidden from default views) |
 | `delete_kr` | Permanently remove a KR (admin only) |
 | `close_quarter` | Close a quarter — blocks member writes (admin only) |
