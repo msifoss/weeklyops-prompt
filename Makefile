@@ -11,3 +11,12 @@ install-app: ## Desktop users — add WeeklyOps to Claude Desktop app
 
 doctor: ## Check MCP connection and identity
 	@bash scripts/doctor.sh
+
+encrypt: ## Re-encrypt team keys into .env.age (admin only)
+	@if [ ! -f .env.keys ]; then echo "Error: .env.keys not found. Create it with USER_KEY_<NAME>=<token> entries."; exit 1; fi
+	@age -p .env.keys > .env.age
+	@echo "Encrypted .env.keys → .env.age"
+	@echo "Commit .env.age and push for the team."
+
+decrypt: ## Decrypt .env.age to view team keys (requires passphrase)
+	@age -d .env.age

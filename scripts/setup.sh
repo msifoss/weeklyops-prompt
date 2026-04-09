@@ -109,6 +109,21 @@ check_python3() {
     command -v python3 &>/dev/null
 }
 
+check_age() {
+    command -v age &>/dev/null
+}
+
+get_age_version() {
+    age --version 2>/dev/null || echo "unknown"
+}
+
+# Convert display name to USER_KEY_ env var name
+# e.g., "Mary-Margaret" → "USER_KEY_MARY_MARGARET"
+name_to_key_var() {
+    local name="$1"
+    echo "USER_KEY_$(echo "$name" | tr '[:lower:]' '[:upper:]' | tr '-' '_')"
+}
+
 # ─── Main ────────────────────────────────────────────────────────────
 
 echo ""
@@ -174,13 +189,19 @@ if ! check_python3; then
     SYSTEM_WARNINGS+=("python3")
 fi
 
+if ! check_age; then
+    SYSTEM_WARNINGS+=("age")
+fi
+
 if [ ${#SYSTEM_WARNINGS[@]} -eq 0 ]; then
-    ok "git, curl, python3"
+    ok "git, curl, python3, age"
 else
     warn "missing: ${SYSTEM_WARNINGS[*]}"
     for tool in "${SYSTEM_WARNINGS[@]}"; do
         if [ "$tool" = "git" ]; then
             MISSING_DEPS+=("git")
+        elif [ "$tool" = "age" ]; then
+            MISSING_DEPS+=("age")
         else
             echo -e "      ${SYM_WARN} ${YELLOW}${tool} is usually included with macOS — you may need to install Xcode Command Line Tools${RESET}"
         fi
@@ -197,6 +218,7 @@ if [ ${#MISSING_DEPS[@]} -gt 0 ]; then
             homebrew)  echo -e "  ${SYM_ARROW} Homebrew ${DIM}(macOS package manager)${RESET}" ;;
             node)      echo -e "  ${SYM_ARROW} Node.js 22 ${DIM}(via Homebrew)${RESET}" ;;
             mcp-remote) echo -e "  ${SYM_ARROW} mcp-remote ${DIM}(npm package for MCP proxy)${RESET}" ;;
+            age)       echo -e "  ${SYM_ARROW} age ${DIM}(encryption tool for shared secrets)${RESET}" ;;
             git)       echo -e "  ${SYM_ARROW} Git ${DIM}(via Xcode Command Line Tools)${RESET}" ;;
         esac
     done
@@ -274,6 +296,18 @@ if [ ${#MISSING_DEPS[@]} -gt 0 ]; then
                 fi
                 ;;
 
+            age)
+                if ! check_homebrew; then
+                    abort "age requires Homebrew. Homebrew installation must have failed."
+                fi
+                installing "Installing age via Homebrew..."
+                if brew install age 2>/dev/null; then
+                    ok "$(get_age_version)"
+                else
+                    abort "age installation failed. Try manually: brew install age"
+                fi
+                ;;
+
             git)
                 installing "Triggering Xcode Command Line Tools install..."
                 echo ""
@@ -330,29 +364,32 @@ fi
 USER_NAME="${NAMES[$((choice-1))]}"
 echo -e "      ${SYM_OK} ${GREEN}${USER_NAME}${RESET}"
 
-# ─── Step 6: Configure API key ──────────────────────────────────────
+# ─── Step 6: Extract API key from .env.age ─────────────────────────
 
-step 6 "Configuring API key"
+step 6 "Extracting API key"
 echo ""
 
-if [ -f "$PROJECT_DIR/.env" ] && grep -q "WEEKLYOPS_API_KEY=." "$PROJECT_DIR/.env" 2>/dev/null; then
-    echo -e "      ${DIM}API key already configured in .env${RESET}"
-    read -rp "      Replace it? (y/N): " replace
-    if [[ "$replace" =~ ^[yY] ]]; then
-        read -rp "      Paste your WeeklyOps API key: " api_key
-        echo "WEEKLYOPS_API_KEY=$api_key" > "$PROJECT_DIR/.env"
-        echo -e "      ${SYM_OK} ${GREEN}Key saved to .env${RESET}"
-    else
-        echo -e "      ${SYM_OK} ${GREEN}Keeping existing key${RESET}"
-    fi
-else
-    read -rp "      Paste your WeeklyOps API key: " api_key
-    if [ -z "$api_key" ]; then
-        abort "API key is required. Get yours from your team admin."
-    fi
-    echo "WEEKLYOPS_API_KEY=$api_key" > "$PROJECT_DIR/.env"
-    echo -e "      ${SYM_OK} ${GREEN}Key saved to .env${RESET}"
+KEY_VAR=$(name_to_key_var "$USER_NAME")
+
+if [ ! -f "$PROJECT_DIR/.env.age" ]; then
+    abort ".env.age not found. This file should be in the repo — try git pull."
 fi
+
+echo -e "      ${DIM}Decrypting .env.age to extract your key...${RESET}"
+echo -e "      ${DIM}Enter the team passphrase when prompted.${RESET}"
+echo ""
+
+DECRYPTED=$(age -d "$PROJECT_DIR/.env.age" 2>/dev/null) || abort "Decryption failed — wrong passphrase?"
+
+# Extract the user's key from the decrypted content
+api_key=$(echo "$DECRYPTED" | grep "^${KEY_VAR}=" | head -1 | cut -d'=' -f2-)
+
+if [ -z "$api_key" ]; then
+    abort "No key found for ${KEY_VAR} in .env.age. Contact your team admin."
+fi
+
+echo "WEEKLYOPS_API_KEY=$api_key" > "$PROJECT_DIR/.env"
+echo -e "      ${SYM_OK} ${GREEN}Key extracted for ${USER_NAME}${RESET}"
 
 # ─── Step 7: Generate config files ──────────────────────────────────
 

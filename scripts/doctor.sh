@@ -112,6 +112,13 @@ else
     warn "python3" "Needed by install-app.sh — usually ships with macOS"
 fi
 
+# age
+if command -v age &>/dev/null; then
+    pass "age" "$(age --version 2>/dev/null)"
+else
+    fail "age" "Run: brew install age"
+fi
+
 # ─── Section: Configuration ──────────────────────────────────────────
 
 echo ""
@@ -130,6 +137,13 @@ if [ -f "$PROJECT_DIR/config.yaml" ] && grep -q 'name: ".\+' "$PROJECT_DIR/confi
     pass "config.yaml has user" "$USER_NAME"
 else
     fail "config.yaml has user" "Run: make setup"
+fi
+
+# .env.age exists
+if [ -f "$PROJECT_DIR/.env.age" ]; then
+    pass ".env.age exists" "encrypted team keys"
+else
+    fail ".env.age exists" "This file should be in the repo — try git pull"
 fi
 
 # .mcp.json exists
